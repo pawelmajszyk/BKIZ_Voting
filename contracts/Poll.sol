@@ -61,9 +61,10 @@ contract Poll {
     }
 
     // Function to get the results of a poll
-    function getResults(uint pollId) public view returns (string memory name, uint[] memory votes) {
+    function getResults(uint pollId) public view returns (string memory name, uint[] memory votes, string[] memory options) {
         PollStruct storage poll = polls[pollId];
         name = poll.name;
         votes = poll.votes;
+        options = poll.options;
     }
 }
