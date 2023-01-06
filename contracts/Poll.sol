@@ -46,18 +46,23 @@ contract Poll {
     // Function to cast a vote in a poll
     function vote(uint pollId, uint option) public {
         PollStruct storage poll = polls[pollId];
-        require(poll.voters.length == poll.votes.length, "Invalid poll data");
-        require(option < poll.options.length, "Invalid option");
-        address voter = msg.sender;
+
         for (uint i = 0; i < poll.voters.length; i++) {
-            if (poll.voters[i] == voter) {
-                poll.votes[i] = option;
-                return;
-            }
+            if (poll.voters[i] == msg.sender) {
+                require(poll.voters.length == poll.votes.length, "Invalid poll data");
+                require(option < poll.options.length, "Invalid option");
+                address voter = msg.sender;
+                for (uint j = 0; j < poll.voters.length; j++) {
+                     if (poll.voters[j] == voter) {
+                            poll.votes[j] = option;
+                            return;
+                        }
+                    }
+         }
         }
-        // If the voter has not been added to the poll, add them and cast their vote
-        addVoter(pollId, voter);
-        poll.votes[poll.votes.length - 1] = option;
+
+        // Sender's address is not in the array, throw an error
+        require(false, "Sender address is not allowed");
     }
 
     // Function to get the results of a poll
