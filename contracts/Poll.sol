@@ -20,6 +20,12 @@ contract Poll {
     constructor() public {
         // Set the contract deployer as the admin
         admin = msg.sender;
+        string[] memory choices = new string[](3);
+        choices[0] = "Opcja1";
+        choices[1] = "Opcja2";
+        choices[2] = "Opcja3";
+        createPoll("Ankieta 1", choices);
+        createPoll("Ankieta 2", choices);
     }
 
     // Function to create a new poll
@@ -35,7 +41,6 @@ contract Poll {
     function addVoter(uint pollId, address voter) public {
         require(msg.sender == admin, "Only the admin can add voters to a poll");
         PollStruct storage poll = polls[pollId];
-        require(poll.voters.length == poll.votes.length, "Invalid poll data");
         for (uint i = 0; i < poll.voters.length; i++) {
             require(poll.voters[i] != voter, "Voter has already been added");
         }
@@ -49,7 +54,6 @@ contract Poll {
 
         for (uint i = 0; i < poll.voters.length; i++) {
             if (poll.voters[i] == msg.sender) {
-                require(poll.voters.length == poll.votes.length, "Invalid poll data");
                 require(option < poll.options.length, "Invalid option");
                 address voter = msg.sender;
                 for (uint j = 0; j < poll.voters.length; j++) {
