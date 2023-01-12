@@ -16,6 +16,10 @@ contract Poll {
     // Admin address
     address public admin;
 
+    // Mapping of option id -> to address and bool to check if user voted
+     mapping(uint => mapping(address => bool)) public voted;
+
+
     // Constructor
     constructor() public {
         // Set the contract deployer as the admin
@@ -45,11 +49,10 @@ contract Poll {
             require(poll.voters[i] != voter, "Voter has already been added");
         }
         poll.voters.push(voter);
-        poll.votes.push(0);
     }
 
     // Function to cast a vote in a poll
-    function vote(uint pollId, uint option) public {
+     function vote(uint pollId, uint option) public {
         PollStruct storage poll = polls[pollId];
 
         for (uint i = 0; i < poll.voters.length; i++) {
@@ -58,6 +61,9 @@ contract Poll {
                 address voter = msg.sender;
                 for (uint j = 0; j < poll.voters.length; j++) {
                      if (poll.voters[j] == voter) {
+                            require(!voted[pollId][msg.sender], "You have already voted in this poll");
+                            voted[pollId][msg.sender] = true;
+
                             poll.votes[j] = option;
                             return;
                         }
